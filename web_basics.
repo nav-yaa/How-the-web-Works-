@@ -1,0 +1,97 @@
+# Client: the user-agent
+The user-agent is any tool that acts on behalf of the user. This role is primarily performed by the Web browser
+
+# HTTP Request/Response Lifecycle
+User → interacts with → Client → sends → HTTP Request → to → Server → returns → HTTP Response → back to → Client → shown to → User
+
+# What is a path?
+A path is the part of a URL that comes after the domain name, specifying the resource being requested on the server.
+
+# What is a verb?
+In HTTP, a verb (also called an HTTP request method) indicates the type of action the client wants the server to perform on a resource.
+GET: Retrieve data from the server	eg: Fetch a blog post, load a webpage
+POST: Send data to the server to create something	eg: Submit a signup form or post a comment
+PUT: Update an existing resource completely	eg: Change a user's profile info
+PATCH: Partially update a resource	eg: Update just the email field in a profile
+DELETE: Remove a resource from the server	eg:Delete a user's account
+
+# What is the Host header?
+In HTTP/1.1, every request must include a Host header.Before HTTP/1.1, in HTTP/1.0, the request didn’t carry any domain name. So if multiple domains were hosted on the same server (same IP), the server couldn’t tell which one the client wanted. With the Host header, now a server can handle many domains on one IP. All can share the same IP address, but the server uses the Host header to route the request to the correct website.
+
+# What is Caching?
+Caching stores copies of previously fetched resources to serve them faster next time 
+Who can cache?
+1. Browser cache – your own browser stores images, scripts, etc.
+2. Reverse proxies – cache content close to the user
+3. Intermediate caches – like ISP or enterprise-level caches
+
+# A proxy server is an intermediary between the client (like a browser) and the server (like a website).
+Types of Proxies:
+- Forward Proxy 
+1. Sits in front of the client
+2. The client sends requests to the proxy → proxy forwards them to the server
+- Used for:
+1. Anonymity- Forward proxies can hide a user's IP address by making all outgoing traffic appear as if it's coming from the proxy.
+2. Internet filtering (e.g., schools, companies)-Organizations (like schools or companies) use forward proxies to restrict access to websites (e.g., social media or adult content).
+3. Accessing geo-blocked content- Useful for users in restricted regions to access blocked content
+- Disadvantages:
+1.Single Point of Failure- If the proxy goes down, internet access for all users relying on it is affected.
+2.Latency- Can slow down access due to extra hop, especially if poorly configured.
+3.Complexity in Configuration- Clients(browser) need to be manually configured to use the proxy.
+- Reverse Proxy 
+1. Sits in front of the server
+2. Client thinks it's talking to the server, but it's really talking to the proxy.
+- Used for 
+1. Load Balancing- Distributes incoming traffic across multiple backend servers to prevent any one server from being overwhelmed.
+2. Caching Static Content- Can cache frequently requested content (like images, videos, scripts) and serve it directly.
+-Disadvantages
+1. Another Point of Failure- If the reverse proxy crashes, users can’t reach any backend servers unless there's redundancy in place.
+2. Increased Complexity- More components to manage — load balancer settings, SSL certificates, caching logic, health checks, etc.
+3. Debugging Difficulties- Troubleshooting issues (like misrouting or content not updating due to caching) can be more complicated.
+
+# What is SSL Termination?
+SSL Termination is when a reverse proxy (or load balancer) is responsible for handling the encryption and decryption of HTTPS traffic instead of the backend servers.So when a client connects to your website over HTTPS:
+1. The SSL/TLS handshake (the encrypted connection setup) happens at the proxy.
+2. The proxy decrypts the request.
+3. It then forwards the plain HTTP request to the backend server.
+4. The server responds → proxy may encrypt again (optional) → sends response back to client.
+
+# What does “stateless” mean in HTTP then?
+“Stateless” in HTTP means- Each HTTP request is independent. The server does not remember any previous request from that client.
+So- 
+1. You send GET /cart
+2. Then you send POST /checkout
+The server does not automatically know those requests are from the same user or the same shopping session.
+That’s why HTTP needs something like:
+1. Cookies
+2. Session tokens
+3. Authorization headers
+To maintain a "session" across multiple stateless HTTP requests.
+
+# HTTP Is an Application Layer Protocol it sits on top of the transport layer. It doesn't manage connections directly — it just needs a reliable delivery of requests/responses.
+HTTP/1.0------- TCP	One request per connection	
+HTTP/1.1------- TCP	Persistent connections, optional pipelining	
+HTTP/2-------- TCP	Multiplexing, binary, header compression	
+HTTP/3-------- QUIC (UDP)	Multiplexing, no handshake latency, mobile-optimized
+
+QUIC Handshake = 1 Round Trip
+QUIC merges:
+1. Connection establishment
+2. Encryption negotiation (TLS 1.3)
+3. Key exchange
+
+- Security Benefits of QUIC
+1. Encryption is mandatory — no plaintext allowed
+2. TLS 1.3 only — no older, weaker TLS versions
+3. Faster handshakes → better privacy, quicker sessions
+4. Connection migration — seamless even if your IP changes (mobile network to WiFi)
+
+MITIGATION PROVIDED BY QUIC
+Eavesdropping	------ Sniffing data in transit ------ Full encryption (headers + payload)
+MITM ------ Intercepting/modifying traffic	------ Authenticated TLS 1.3 handshake
+Downgrade Attacks	--Forcing use of weak protocols	No fallback, TLS 1.3 only
+Connection Hijacking	Stealing session via IP/port guessing	Encrypted Connection ID, not IP tied
+Replay Attacks	Reusing requests to trick servers	TLS anti-replay + QUIC tracking
+
+
+
