@@ -94,4 +94,20 @@ Connection Hijacking	Stealing session via IP/port guessing	Encrypted Connection 
 Replay Attacks	Reusing requests to trick servers	TLS anti-replay + QUIC tracking
 
 
+What are HTTP security headers?
+HTTP security headers are response headers sent by a web server to a browser that provide important instructions on how the browser should behave when handling the website’s content. These headers help secure web applications 
+First up are the two best-known HTTP response headers that any modern web application will be setting.
+1. The HTTP Strict Transport Security header (HSTS)
+2. The Content Security Policy header (CSP) 
 
+Strict-Transport-Security?
+The Strict-Transport-Security HTTP response header is a security mechanism that tells the browser:Always use HTTPS, not HTTP, to connect to this site in the future—even if the user types http. 
+Strict-Transport-Security: max-age=63072000; includeSubDomains; preload
+1. max-age=63072000
+- Tells the browser to remember this rule for 63,072,000 seconds (that’s 2 years).
+- Any future request to this domain will automatically be upgraded to HTTPS before the request is made.
+2. includeSubDomains
+- Extends this rule to all subdomains.
+3. preload:
+- Your domain is hardcoded into browsers as HTTPS-only.
+- Even the very first visit is forced to HTTPS.
